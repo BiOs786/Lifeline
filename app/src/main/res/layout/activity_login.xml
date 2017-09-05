@@ -90,7 +90,8 @@
         android:layout_marginLeft="49dp"
         app:layout_constraintLeft_toLeftOf="@+id/edit_text_password"
         android:id="@+id/button"
-        app:layout_constraintHorizontal_bias="0.0" />
+        app:layout_constraintHorizontal_bias="0.0"
+        android:onClick="openHospitalActivity"/>
 
     <TextView
         android:id="@+id/text_view_forget_password"
