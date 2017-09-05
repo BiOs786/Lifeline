@@ -44,9 +44,13 @@ public class BarcodeScannerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode_scanner);
+
+        mImageView = (ImageView) findViewById(R.id.image_view);
+        mTitleTextView = (TextView) findViewById(R.id.text_title_view);
+
     }
 
-    public void checkBarcode() {
+    public void checkBarcode(View view) {
         // Check for the external storage permission
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)

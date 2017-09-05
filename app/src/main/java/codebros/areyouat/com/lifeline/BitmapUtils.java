@@ -1,4 +1,11 @@
-package codebros.areyouat.com.lifeline.sync;
+package codebros.areyouat.com.lifeline;
+
+/**
+ * Created by BiOs on 05-09-2017.
+ */
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.content.Context;
 import android.content.Intent;
