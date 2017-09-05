@@ -4,12 +4,17 @@
     <string name="mission_body">We connect blood banks and hospitals in an automated way and reducing time.</string>
     <string name="strategy_body">We connect with hospitals using our platform so that they can manage their databases.</string>
     <string name="support_body">We made this for hospitals who would like to be a part of this changing system. Gratitude to those supporting us</string>
-    <string name="our_support">Support</string>git remote add origin https://github.com/[username]/[project_name].git
+    <string name="our_support">Support</string>git remote add origin
+    https://github.com/[username]/[project_name].git
     <string name="our_strategy">Strategy</string>
     <string name="vision_body">To stop wastage of expired blood and bringing transparency in the system.</string>
     <string name="our_vision">Vision</string>
 
     <string name="title_activity_maps">Map</string>
     <string name="login_as_guest">Emergency?</string>
+    <string name="add_database">Add database</string>
+    <string name="find_bloodgroup">Find Blood Group</string>
+    <string name="error">Error: Cannot Delete</string>
+    <string name="saved_message">Image saved</string>
 
 </resources>
