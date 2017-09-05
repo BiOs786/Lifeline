@@ -1,4 +1,4 @@
-package codebros.areyouat.com.lifeline.barcode;
+package codebros.areyouat.com.lifeline.sync;
 
 import android.content.Context;
 import android.content.Intent;
