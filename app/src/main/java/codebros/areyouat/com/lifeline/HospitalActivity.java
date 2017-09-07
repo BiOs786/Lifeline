@@ -21,7 +21,6 @@ public class HospitalActivity extends AppCompatActivity {
     }
 
     public void openBarcodeActivity(View view) {
-        Intent intent = new Intent(getApplicationContext(), BarcodeScannerActivity.class);
-        startActivity(intent);
+
     }
 }

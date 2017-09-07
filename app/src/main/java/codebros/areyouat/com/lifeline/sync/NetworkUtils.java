@@ -1,6 +1,7 @@
 package codebros.areyouat.com.lifeline.sync;
 
 import android.net.Uri;
+import android.util.Log;
 
 import com.google.gson.JsonParser;
 
@@ -22,6 +23,7 @@ public final class NetworkUtils {
     }
 
     public static final String BASE_URL = "http://192.168.1.105/lifeline/response.php?city=Mumbai&quantity=1";
+    public static final String LOGIN_URL = "http://localhost/lifelinefinal/response.php?key=login&&value=";
     private static final String CITY = "city";
     private static final String QUANTITY = "quantity";
 
@@ -42,5 +44,22 @@ public final class NetworkUtils {
 
         return url;
     }
+
+    public static URL buildHttpUrlForLogin(String json)
+    {
+        Uri loginUri = Uri.parse(LOGIN_URL + json)
+                .buildUpon().build();
+
+        Log.d("NetworkUtils", loginUri.toString());
+
+        try {
+            URL url = new URL(loginUri.toString());
+            return url;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 }

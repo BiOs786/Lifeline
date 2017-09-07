@@ -11,7 +11,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,8 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    public static void addHospital(Hospital hospital)
-    {
+    public static void addHospital(Hospital hospital) {
         hospitals.add(hospital);
     }
 
@@ -120,9 +121,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Log.d("Hospital", "Size:"+String.valueOf(hospitals.size()));
-            for(Hospital hospital: hospitals)
-            {
+            Log.d("Hospital", "Size:" + String.valueOf(hospitals.size()));
+
+            if (hospitals == null || hospitals.size() == 0) {
+                Toast.makeText(getBaseContext(), "No hospitals to show", Toast.LENGTH_LONG).show();
+                getBackToHospitalActivity();
+                return;
+            }
+
+            for (Hospital hospital : hospitals) {
                 String latitude = hospital.getLatitude();
                 String longitude = hospital.getLongitude();
 
@@ -132,10 +139,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LatLng firstLatLng = new LatLng(Double.parseDouble(hospitals.get(0).getLatitude()),
                     Double.parseDouble(hospitals.get(0).getLongitude()));
             mMap.moveCamera(CameraUpdateFactory.newLatLng(firstLatLng));
-            CameraUpdate  zoom = CameraUpdateFactory.zoomTo(11);
+            CameraUpdate zoom = CameraUpdateFactory.zoomTo(11);
             mMap.animateCamera(zoom);
         }
     }
 
 
+    private void getBackToHospitalActivity() {
+        NavUtils.navigateUpFromSameTask(this);
+    }
 }

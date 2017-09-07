@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -28,7 +29,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".FindActivity" />
-        <activity android:name=".BarcodeScannerActivity" />
         <activity android:name=".LoginActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -49,7 +49,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="codebros.areyouat.com.lifeline.FindActivity" />
         </activity>
-        <activity android:name=".HospitalActivity"></activity>
+        <activity android:name=".HospitalActivity"/>
     </application>
 
 </manifest>
