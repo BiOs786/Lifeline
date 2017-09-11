@@ -24,6 +24,7 @@ import android.app.Activity;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ContextThemeWrapper;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -49,6 +50,8 @@ import codebros.areyouat.com.lifeline.sync.NetworkUtils;
  */
 public class BarcodeActivity extends Activity implements View.OnClickListener {
 
+    public static final String STATUSTAG = "STATUSTAG";
+
     // use a compound button so either checkbox or switch widgets work.
     private CompoundButton autoFocus;
     private CompoundButton useFlash;
@@ -60,18 +63,22 @@ public class BarcodeActivity extends Activity implements View.OnClickListener {
 
     private String bloodId;
     private String hospitalId;
+    public String bloodType;
+    public String quantity;
+    public String expiry;
 
     public static HashMap<String, Integer> bloodStrToInt;
 
     public Context mContext;
     public FetchBloodInsertStatus fetch;
+    public int dataFound;;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_barcode);
 
-        mContext = this;
+        mContext = BarcodeActivity.this;
 
         bloodStrToInt = new HashMap<>();
         bloodStrToInt.put("A+", 1);
@@ -149,10 +156,7 @@ public class BarcodeActivity extends Activity implements View.OnClickListener {
 
                     bloodId = barcode.displayValue;
 
-                    BloodDetails bd = new BloodDetails(hospitalId, bloodId);
-
-                    FetchBloodData fetchBloodData = new FetchBloodData();
-                    fetchBloodData.execute(NetworkUtils.buildHttpUrlForBlood(bd));
+                    performFetching();
 
                     Log.d(TAG, "Barcode read: " + barcode.displayValue);
                 } else {
@@ -169,91 +173,15 @@ public class BarcodeActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    private void performFetching() {
+
+        BloodDetails bd = new BloodDetails(hospitalId, bloodId);
+        FetchBloodData fetchBloodData = new FetchBloodData();
+        fetchBloodData.execute(NetworkUtils.buildHttpUrlForBlood(bd));
+    }
+
     private class FetchBloodData extends AsyncTask<String, Void, Void>
     {
-        String bloodType;
-        String quantity;
-        String expiry;
-
-        public void showDialogBox()
-        {
-            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-            final EditText text = new EditText(mContext);
-
-            builder.setTitle("Add blood details").setMessage("Bloodtype").setView(text);
-            builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface di, int i) {
-                    bloodType = text.getText().toString();
-                    //do something with it
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface di, int i) {
-                }
-            });
-            builder.create().show();
-
-            //For Quantity
-
-            AlertDialog.Builder qBuilder = new AlertDialog.Builder(mContext);
-            final EditText qText = new EditText(mContext);
-
-            qBuilder.setTitle("Add blood details").setMessage("Quantity").setView(qText);
-            qBuilder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface di, int i) {
-                    quantity = text.getText().toString();
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface di, int i) {
-                }
-            });
-            qBuilder.create().show();
-
-            //For Expiry
-
-            AlertDialog.Builder yBuilder = new AlertDialog.Builder(mContext);
-            final EditText yText = new EditText(mContext);
-
-            yBuilder.setTitle("Add blood details").setMessage("Expiry in YYYY-MM-DD format").setView(yText);
-            yBuilder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface di, int i) {
-                    expiry = text.getText().toString();
-                    //do something with it
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface di, int i) {
-                }
-            });
-            yBuilder.create().show();
-        }
-
-        public void showDialogBoxForBloodType()
-        {
-            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-            final EditText text = new EditText(mContext);
-
-            builder.setTitle("Add blood details").setMessage("Bloodtype").setView(text);
-            builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface di, int i) {
-                    bloodType = text.getText().toString();
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                public void onClick(DialogInterface di, int i) {
-                }
-            });
-            builder.create().show();
-        }
 
         @Override
         protected Void doInBackground(String... params) {
@@ -266,34 +194,13 @@ public class BarcodeActivity extends Activity implements View.OnClickListener {
             try {
                 JSONObject bloodJson = new JSONObject(jsonString);
 
-                int dataFound = (int) bloodJson.get("data_found");
-                String hr_id = (String) bloodJson.get("hr_id");
-                String hr_uid = (String) bloodJson.get("hr_uid");
-                String hr_bloodtype = (String) bloodJson.get("hr_bloodtype");
-                String hr_dateadded = (String) bloodJson.get("hr_dateadded");
-                String h_id = (String) bloodJson.get("h_id");
-
-                if(dataFound == 0)
-                {
-                    //                  perform insert
-                    showDialogBox();
-                    BloodInsert bi = new BloodInsert(hospitalId, bloodType, quantity, expiry, bloodId);
-                    performInsert(bi);
-                    Log.d("dataFound", String.valueOf(dataFound));
-                    cancel(true);
-
-
-                }
-                else if(dataFound == 1)
-                {
-
-                    Log.d("dataFound", String.valueOf(dataFound));
-                    showDialogBoxForBloodType();
-                    //                    perform delete
-                    BloodDelete bd = new BloodDelete(hospitalId, bloodType, bloodId);
-                    performDelete(bd);
-                    cancel(true);
-                }
+                Log.d("FetchingBloodData", bloodJson.toString());
+                dataFound = ((Long) bloodJson.getLong("data_found")).intValue();
+//                String hr_id = (String) bloodJson.get("hr_id");
+//                String hr_uid = (String) bloodJson.get("hr_uid");
+//                String hr_bloodtype = (String) bloodJson.get("hr_bloodtype");
+//                String hr_dateadded = (String) bloodJson.get("hr_dateadded");
+//                String h_id = (String) bloodJson.get("h_id");
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -302,6 +209,110 @@ public class BarcodeActivity extends Activity implements View.OnClickListener {
 
             return null;
         }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            performPostBloodData();
+        }
+    }
+
+    private void performPostBloodData() {
+
+        if(dataFound == 0)
+        {
+            //                  perform insert
+            showDialogBox();
+            BloodInsert bi = new BloodInsert(hospitalId, bloodType, quantity, expiry, bloodId);
+            performInsert(bi);
+            Log.d("dataFound", String.valueOf(dataFound));
+        }
+        else
+        {
+            Log.d("dataFound", String.valueOf(dataFound));
+            showDialogBoxForBloodType();
+            //                    perform delete
+            BloodDelete bd = new BloodDelete(hospitalId, bloodType, bloodId);
+            performDelete(bd);
+        }
+
+    }
+
+    public void showDialogBox()
+    {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(mContext, R.style.myDialog));
+        final EditText text = new EditText(mContext);
+
+        builder.setTitle("Add blood details").setMessage("Bloodtype").setView(text);
+        builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface di, int i) {
+                bloodType = text.getText().toString();
+                //do something with it
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface di, int i) {
+            }
+        });
+        builder.create().show();
+
+        //For Quantity
+
+        AlertDialog.Builder qBuilder = new AlertDialog.Builder(new ContextThemeWrapper(mContext, R.style.myDialog));
+        final EditText qText = new EditText(mContext);
+
+        qBuilder.setTitle("Add blood details").setMessage("Quantity").setView(qText);
+        qBuilder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface di, int i) {
+                quantity = qText.getText().toString();
+            }
+        });
+        qBuilder.create().show();
+
+        //For Expiry
+
+        AlertDialog.Builder yBuilder = new AlertDialog.Builder(new ContextThemeWrapper(mContext, R.style.myDialog));
+        final EditText yText = new EditText(mContext);
+
+        yBuilder.setTitle("Add blood details").setMessage("Expiry in YYYY-MM-DD format").setView(yText);
+        yBuilder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface di, int i) {
+                expiry = yText.getText().toString();
+                //do something with it
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface di, int i) {
+            }
+        });
+        yBuilder.create().show();
+    }
+
+    public void showDialogBoxForBloodType()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(mContext, R.style.myDialog));
+        final EditText text = new EditText(mContext);
+
+        builder.setTitle("Add blood details").setMessage("Bloodtype").setView(text);
+        builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface di, int i) {
+                bloodType = text.getText().toString();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface di, int i) {
+            }
+        });
+        builder.create().show();
     }
 
     private void performDelete(BloodDelete blood) {
@@ -324,28 +335,30 @@ public class BarcodeActivity extends Activity implements View.OnClickListener {
 
             String jsonReponse = NetworkUtils.getResponseFromHttpUrl(url);
 
-            int status = 0;
+            int status;
             try {
                 JSONObject jsonObject = new JSONObject(jsonReponse);
-                status = (int) jsonObject.get("status");
+                status = (int) jsonObject.getLong("status");
 
                 if(status == 1)
                 {
-                    Snackbar.make(findViewById(R.id.ad_container), "Deleted Successfully", Snackbar.LENGTH_LONG)
-                            .show();
-
+//                    Snackbar.make(findViewById(R.id.ad_container), "Deleted Successfully", Snackbar.LENGTH_LONG)
+//                            .show();
+                    Log.d(STATUSTAG, "Deleted successfull");
                     cancel(true);
                 }
                 else
                 {
-                    Snackbar.make(findViewById(R.id.ad_container), "Deletion Unsuccesfull", Snackbar.LENGTH_LONG)
-                            .show();
+//                    Snackbar.make(findViewById(R.id.ad_container), "Deletion Unsuccesfull", Snackbar.LENGTH_LONG)
+//                            .show();
+                    Log.d(STATUSTAG, "Deleted unsuccessfull");
                     cancel(true);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Snackbar.make(findViewById(R.id.ad_container), "Deletion Unsuccesfull", Snackbar.LENGTH_LONG)
-                        .show();
+//                    Snackbar.make(findViewById(R.id.ad_container), "Deletion Unsuccesfull", Snackbar.LENGTH_LONG)
+//                        .show();
+                Log.d(STATUSTAG, "Deleted unsuccessfull");
                 cancel(true);
             }
 
@@ -362,28 +375,31 @@ public class BarcodeActivity extends Activity implements View.OnClickListener {
 
             String jsonReponse = NetworkUtils.getResponseFromHttpUrl(url);
 
-            int status = 0;
+            int status;
             try {
                 JSONObject jsonObject = new JSONObject(jsonReponse);
                 status = (int) jsonObject.get("status");
 
                 if(status == 1)
                 {
-                    Snackbar.make(findViewById(R.id.ad_container), "Inserted Successfully", Snackbar.LENGTH_LONG)
-                            .show();
+//                    Snackbar.make(findViewById(R.id.ad_container), "Inserted Successfully", Snackbar.LENGTH_LONG)
+//                            .show();
+                    Log.d(STATUSTAG, "Inserted successfully");
 
                     cancel(true);
                 }
                 else
                 {
-                    Snackbar.make(findViewById(R.id.ad_container), "Insertion Unsuccesfull", Snackbar.LENGTH_LONG)
-                            .show();
+//                    Snackbar.make(findViewById(R.id.ad_container), "Insertion Unsuccesfull", Snackbar.LENGTH_LONG)
+//                            .show();
+                    Log.d(STATUSTAG, "Insertion unsuccessful");
                     cancel(true);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
-                Snackbar.make(findViewById(R.id.ad_container), "Insertion Unsuccesfull", Snackbar.LENGTH_LONG)
-                        .show();
+//                    Snackbar.make(findViewById(R.id.ad_container), "Insertion Unsuccesfull", Snackbar.LENGTH_LONG)
+//                        .show();
+                Log.d(STATUSTAG, "Insertion unsuccessful");
             }
             return null;
         }

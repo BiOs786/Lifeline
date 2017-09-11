@@ -41,7 +41,7 @@ public class FindActivity extends AppCompatActivity implements AdapterView.OnIte
 
     String bloodGroup;
     String bloodQuantity;
-
+    String jsonExtra;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +49,13 @@ public class FindActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_find);
 
         Intent callingIntent = getIntent();
-        String jsonExtra = callingIntent.getStringExtra("HospitalDetails");
-
-        try {
-            hospitalDetails = new JSONObject(jsonExtra);
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(callingIntent.hasExtra("HospitalDetails")) {
+            jsonExtra = callingIntent.getStringExtra("HospitalDetails");
+            try {
+                hospitalDetails = new JSONObject(jsonExtra);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         //FOR BLOOD GROUPS

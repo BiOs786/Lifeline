@@ -56,17 +56,17 @@ public class LoginActivity extends AppCompatActivity {
         String pass = passEt.getText().toString();
         fetchlogin.execute(new LoginDetails(user, pass));
 
-        Handler handler = new Handler();
-
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-
-                if(!isAuthenticated)
-                Toast.makeText(mContext, "Username or password wrong.", Toast.LENGTH_LONG).show();
-
-            }
-        }, 2000);
+//        Handler handler = new Handler();
+//
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//                if(!isAuthenticated)
+//                Toast.makeText(mContext, "Username or password wrong.", Toast.LENGTH_LONG).show();
+//
+//            }
+//        }, 3000);
     }
 
     private void openHospitalLoginActivity() {

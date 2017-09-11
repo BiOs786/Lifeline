@@ -35,7 +35,7 @@ public final class NetworkUtils {
     public static final String FIND_URL = "http://192.168.1.105/lifeline/response.php?key=find&&value=";
     public static final String BLOOD_STATUS_URL= "http://192.168.1.105/lifeline/response.php?key=check&&value=";
     public static final String INSERT_BLOOD_URL = "http://192.168.1.105/lifeline/response.php?key=insert&&value=";
-    public static final String DELETE_BLOOD_URL = "http://192.168.1.105/lifeline/response.php?key=delete&&value=}";
+    public static final String DELETE_BLOOD_URL = "http://192.168.1.105/lifeline/response.php?key=delete&&value=";
     private static final String CITY = "city";
     private static final String QUANTITY = "quantity";
 
