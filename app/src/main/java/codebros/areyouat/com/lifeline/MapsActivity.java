@@ -123,11 +123,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             super.onPostExecute(aVoid);
             Log.d("Hospital", "Size:" + String.valueOf(hospitals.size()));
 
-            if (hospitals == null || hospitals.size() == 0) {
-                Toast.makeText(getBaseContext(), "No hospitals to show", Toast.LENGTH_LONG).show();
-                getBackToHospitalActivity();
-                return;
-            }
 
             for (Hospital hospital : hospitals) {
                 String latitude = hospital.getLatitude();
