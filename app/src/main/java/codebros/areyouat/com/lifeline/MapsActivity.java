@@ -42,6 +42,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     public static List<Hospital> hospitals = null;
+    JSONObject jsonObject = null;
+    public String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +55,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         hospitals = new ArrayList<Hospital>();
 
-        FetchHospitalsDetails fetch = new FetchHospitalsDetails();
-        fetch.execute();
+        if (getIntent() != null) {
+            url = getIntent().getStringExtra("FindDetailsURL");
+            FetchHospitalsDetails fetch = new FetchHospitalsDetails();
+            fetch.execute(url);
+
+        } else {
+            Log.d("Not hospital", "Blah Blah");
+            /*FetchHospitalsDetails fetch = new FetchHospitalsDetails();
+            fetch.execute();*/
+        }
 
     }
 
@@ -77,24 +87,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
     }
 
-    public class FetchHospitalsDetails extends AsyncTask<Void, Void, Void> {
+    public class FetchHospitalsDetails extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
+        protected Void doInBackground(String... params) {
 
-        @Override
-        protected Void doInBackground(Void... params) {
+            String url = params[0];
 
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url(NetworkUtils.BASE_URL)
-                    .build();
             try {
-
-                Response response = client.newCall(request).execute();
-                JSONArray array = new JSONArray(response.body().string());
+                String jsonStringForMaps = NetworkUtils.getResponseFromHttpUrl(url);
+                JSONArray array = new JSONArray(jsonStringForMaps);
 
                 for (int i = 0; i < array.length(); i++) {
 
@@ -110,8 +112,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     MapsActivity.addHospital(hospital);
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -123,22 +123,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             super.onPostExecute(aVoid);
             Log.d("Hospital", "Size:" + String.valueOf(hospitals.size()));
 
+            if(hospitals.size() != 0)
+            {
+                for (Hospital hospital : hospitals) {
+                    String latitude = hospital.getLatitude();
+                    String longitude = hospital.getLongitude();
 
-            for (Hospital hospital : hospitals) {
-                String latitude = hospital.getLatitude();
-                String longitude = hospital.getLongitude();
-
-                LatLng latlng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
-                mMap.addMarker(new MarkerOptions().position(latlng).title(hospital.getHospital()));
+                    LatLng latlng = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+                    mMap.addMarker(new MarkerOptions().position(latlng).title(hospital.getHospital()));
+                }
+                LatLng firstLatLng = new LatLng(Double.parseDouble(hospitals.get(0).getLatitude()),
+                        Double.parseDouble(hospitals.get(0).getLongitude()));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(firstLatLng));
+                CameraUpdate zoom = CameraUpdateFactory.zoomTo(12);
+                mMap.animateCamera(zoom);
             }
-            LatLng firstLatLng = new LatLng(Double.parseDouble(hospitals.get(0).getLatitude()),
-                    Double.parseDouble(hospitals.get(0).getLongitude()));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(firstLatLng));
-            CameraUpdate zoom = CameraUpdateFactory.zoomTo(11);
-            mMap.animateCamera(zoom);
         }
     }
 
+
+    public void addMarkersHorHospitals()
+    {
+
+    }
 
     private void getBackToHospitalActivity() {
         NavUtils.navigateUpFromSameTask(this);

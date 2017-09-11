@@ -1,8 +1,11 @@
 package codebros.areyouat.com.lifeline;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -30,8 +33,10 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passEt;
     private Boolean isAuthenticated = false;
     LoginDetails details;
+    public Context mContext;
 
-    public static HospitalLoginDetails hospitalLoginDetails;
+    public HospitalLoginDetails hospitalLoginDetails;
+    private JSONObject loginObject;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,70 +45,91 @@ public class LoginActivity extends AppCompatActivity {
 
         userEt = (EditText) findViewById(R.id.edit_text_username);
         passEt = (EditText) findViewById(R.id.edit_text_password);
-
+        mContext = this;
     }
 
 
     public void openHospitalActivity(View view) {
 
-//        String user = userEt.getText().toString();
-//        String pass = passEt.getText().toString();
-//
-//        if (user.equals("") || pass.equals("")) {
-//            Toast.makeText(this, "Enter credetials", Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//
-//        details = new LoginDetails(user, pass);
+        FetchLoginDetails fetchlogin = new FetchLoginDetails();
+        String user = userEt.getText().toString();
+        String pass = passEt.getText().toString();
+        fetchlogin.execute(new LoginDetails(user, pass));
 
-        try {
+        Handler handler = new Handler();
 
-            String json = NetworkUtils.getJSON(NetworkUtils.LOGIN_URL, 5000);
-            Log.d("JSONRESPONSE", json);
-            JSONObject object = new JSONObject(json);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
+                if(!isAuthenticated)
+                Toast.makeText(mContext, "Username or password wrong.", Toast.LENGTH_LONG).show();
 
-            if (object.has("id")) {
-                String id = object.getString("id");
-                String username = object.getString("user_name");
-                String email = object.getString("email");
-                String mobile = object.getString("mobile");
-                String hospital = object.getString("hospital");
-
-                String regno = object.getString("reg_no");
-                String city = object.getString("city");
-                String password = object.getString("password");
-
-                String address = object.getString("address");
-                String latitude = object.getString("latitude");
-                String longitude = object.getString("longitude");
-
-                hospitalLoginDetails = new HospitalLoginDetails(id, username, email, mobile, hospital, regno, city, password, address, latitude, longitude
-                );
-
-                isAuthenticated = true;
-                openHospitalLoginActivity();
-
-            } else {
-                isAuthenticated = false;
-                showLoginFailedToast();
             }
-
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-
+        }, 2000);
     }
 
     private void openHospitalLoginActivity() {
 
         Intent intent = new Intent(this, HospitalActivity.class);
+        intent.putExtra("HospitalDetails", loginObject.toString());
         startActivity(intent);
 
     }
 
 
-    private void showLoginFailedToast() {
-        Toast.makeText(this, "Login failed", Toast.LENGTH_LONG).show();
+    private class FetchLoginDetails extends AsyncTask<LoginDetails, Void, Void> {
+
+        @Override
+        protected Void doInBackground(LoginDetails... params) {
+
+            details = params[0];
+
+            try {
+                String json = NetworkUtils.getResponseFromHttpUrl(NetworkUtils
+                        .buildHttpUrlForLogin(details));
+
+                Log.d("JSONRESPONSE", json);
+                JSONObject object = new JSONObject(json);
+                Log.d("JSONRESPONSE", "REACHES HERE");
+                if (object.has("id")) {
+                    loginObject = object;
+                    String id = object.getString("id");
+                    String username = object.getString("user_name");
+                    String email = object.getString("email");
+                    String mobile = object.getString("mobile");
+                    String hospital = object.getString("hospital");
+
+                    String regno = object.getString("reg_no");
+                    String city = object.getString("city");
+                    String password = object.getString("password");
+
+                    String address = object.getString("address");
+                    String latitude = object.getString("latitude");
+                    String longitude = object.getString("longitude");
+
+                    hospitalLoginDetails = new HospitalLoginDetails(id, username, email, mobile, hospital, regno, city, password, address, latitude, longitude
+                    );
+
+                    isAuthenticated = true;
+                    openHospitalLoginActivity();
+                }
+
+            } catch (JSONException e) {
+                isAuthenticated = false;
+                cancel(true);
+            }
+            return null;
+        }
+
+    }
+
+    private void refreshDetails() {
+        userEt.setText("");
+        passEt.setText("");
+    }
+
+    public HospitalLoginDetails getHospitalLoginDetails() {
+        return hospitalLoginDetails;
     }
 }

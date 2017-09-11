@@ -1,10 +1,10 @@
-package codebros.areyouat.com.lifeline.sync;
+package codebros.areyouat.com.lifeline;
 
 /**
  * Created by BiOs on 11-09-2017.
  */
 
-class FindDetails {
+public class FindDetails {
 
     public FindDetails(String id, String latitude, String longitude, String bloodtype, String city, String quantity) {
         this.id = id;

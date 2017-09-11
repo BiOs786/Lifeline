@@ -17,4 +17,25 @@
     <string name="error">Error: Cannot Delete</string>
     <string name="saved_message">Image saved</string>
 
+    <string-array name="blood_groups_array">
+        <item>A+</item>
+        <item>A-</item>
+        <item>B+</item>
+        <item>B-</item>
+        <item>AB+</item>
+        <item>AB-</item>
+        <item>O+</item>
+        <item>O-</item>
+    </string-array>
+
+
+
+    <string-array name="blood_quantity_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+
+
 </resources>
