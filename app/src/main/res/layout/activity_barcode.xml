@@ -34,8 +34,9 @@
         android:layout_height="wrap_content"
         android:text="@string/read_barcode"
         android:id="@+id/read_barcode"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/use_flash"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="46dp" />
 
     <CheckBox
         android:layout_width="wrap_content"
@@ -57,5 +58,10 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:checked="false" />
+
+    <FrameLayout
+        android:id="@+id/ad_container"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"></FrameLayout>
 
 </RelativeLayout>

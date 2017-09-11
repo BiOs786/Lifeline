@@ -12,8 +12,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
+import codebros.areyouat.com.lifeline.BloodDelete;
+import codebros.areyouat.com.lifeline.BloodDetails;
+import codebros.areyouat.com.lifeline.BloodInsert;
 import codebros.areyouat.com.lifeline.FindDetails;
 import codebros.areyouat.com.lifeline.LoginDetails;
+import retrofit2.http.DELETE;
 
 /**
  * Created by BiOs on 05-09-2017.
@@ -29,6 +33,9 @@ public final class NetworkUtils {
     public static final String BASE_URL = "http://192.168.1.105/lifeline/response.php?key=find&&value=";
     public static final String LOGIN_URL = "http://192.168.1.105/lifeline/response.php?key=login&&value=";
     public static final String FIND_URL = "http://192.168.1.105/lifeline/response.php?key=find&&value=";
+    public static final String BLOOD_STATUS_URL= "http://192.168.1.105/lifeline/response.php?key=check&&value=";
+    public static final String INSERT_BLOOD_URL = "http://192.168.1.105/lifeline/response.php?key=insert&&value=";
+    public static final String DELETE_BLOOD_URL = "http://192.168.1.105/lifeline/response.php?key=delete&&value=}";
     private static final String CITY = "city";
     private static final String QUANTITY = "quantity";
 
@@ -52,6 +59,45 @@ public final class NetworkUtils {
         String json = gson.toJson(find);
 
         Uri findUri = Uri.parse(FIND_URL + json)
+                .buildUpon().build();
+
+        Log.d("NetworkUtils", findUri.toString());
+
+        return findUri.toString();
+    }
+
+    public static String buildHttpUrlForBlood(BloodDetails blood)
+    {
+        Gson gson = new Gson();
+        String json = gson.toJson(blood);
+
+        Uri bloodUri = Uri.parse(BLOOD_STATUS_URL + json)
+                .buildUpon().build();
+
+        Log.d("NetworkUtils", bloodUri.toString());
+
+        return bloodUri.toString();
+    }
+
+    public static String buildHttpUrlForBloodInsert(BloodInsert blood)
+    {
+        Gson gson = new Gson();
+        String json = gson.toJson(blood);
+
+        Uri findUri = Uri.parse(INSERT_BLOOD_URL + json)
+                .buildUpon().build();
+
+        Log.d("NetworkUtils", findUri.toString());
+
+        return findUri.toString();
+    }
+
+    public static String buildHttpUrlForBloodDelete(BloodDelete blood)
+    {
+        Gson gson = new Gson();
+        String json = gson.toJson(blood);
+
+        Uri findUri = Uri.parse(DELETE_BLOOD_URL + json)
                 .buildUpon().build();
 
         Log.d("NetworkUtils", findUri.toString());

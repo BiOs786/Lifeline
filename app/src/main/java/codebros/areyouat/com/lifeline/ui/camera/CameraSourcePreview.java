@@ -18,6 +18,8 @@ package codebros.areyouat.com.lifeline.ui.camera;/*
 import android.Manifest;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.RequiresPermission;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -51,6 +53,19 @@ public class CameraSourcePreview extends ViewGroup {
         mSurfaceView = new SurfaceView(context);
         mSurfaceView.getHolder().addCallback(new SurfaceCallback());
         addView(mSurfaceView);
+    }
+
+    public CameraSourcePreview(Context context) {
+        super(context);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public CameraSourcePreview(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    public CameraSourcePreview(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
     }
 
     @RequiresPermission(Manifest.permission.CAMERA)

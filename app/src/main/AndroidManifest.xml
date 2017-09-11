@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="codebros.areyouat.com.lifeline">
 
+    <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -43,6 +45,13 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
+
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps">
@@ -51,6 +60,9 @@
                 android:value="codebros.areyouat.com.lifeline.FindActivity" />
         </activity>
         <activity android:name=".HospitalActivity"/>
+        <activity android:name=".BarcodeActivity" />
+        <activity android:name=".BarcodeCaptureActivity"
+            android:label="Read Barcode"/>
     </application>
 
 </manifest>

@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class HospitalActivity extends AppCompatActivity {
 
     String hospitalDetails;
@@ -20,7 +23,6 @@ public class HospitalActivity extends AppCompatActivity {
     public void loginAsHospital(View view) {
 
 
-
         Intent intent = new Intent(getApplicationContext(), FindActivity.class);
         intent.putExtra("HospitalDetails", hospitalDetails);
         startActivity(intent);
@@ -28,6 +30,19 @@ public class HospitalActivity extends AppCompatActivity {
     }
 
     public void openBarcodeActivity(View view) {
+
+        Intent intent = new Intent(getApplicationContext(), BarcodeActivity.class);
+
+        String hospitalId = null;
+        try {
+            JSONObject object = new JSONObject(hospitalDetails);
+            hospitalId = (String) object.get("id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        intent.putExtra("id", hospitalId);
+
+        startActivity(intent);
 
     }
 }
